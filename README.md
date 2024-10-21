@@ -1,8 +1,5 @@
-# React + Vite
+- figman
+  https://www.figma.com/design/VZPuuu1KLCiR4ca6pq8XFr/LCKD-1.1?node-id=18-0&node-type=frame&t=qDvwpfAFisdCRlpq-0
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- uppgiften
+  https://gist.github.com/zocom-christoffer-wallenberg/33ccaf335f123f154726ed818349530e
