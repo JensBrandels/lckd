@@ -2,12 +2,18 @@ import "../sass/LoginPage.scss";
 import LCKDLOGO from "../assets/Logo.svg";
 import Eyeseeyou from "../assets/eyecansee.svg";
 import Eyecantsee from "../assets/eyecantsee.svg";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  function handleClick(path) {
+    navigate(path);
+  }
+
   return (
     <div className="login-main-container">
       <header>
-        <button>Sign up</button>
+        <button onClick={() => handleClick("/signup")}>Sign up</button>
       </header>
       <div className="login-content">
         <img src={LCKDLOGO} alt="" />
