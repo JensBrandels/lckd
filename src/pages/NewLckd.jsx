@@ -11,7 +11,7 @@ const NewLckd = () => {
     const check = addNewLckd();
 
     if (check) {
-      navigate("/");
+      navigate("/viewpasswords");
     } else {
       alert("username, password and url required");
     }
