@@ -17,12 +17,7 @@ const SignupPage = () => {
       setUserName("");
       return;
     }
-    const response = addUserToDb();
-    if (response.success) {
-      setPassword("");
-      setUserName("");
-      navigate("/");
-    }
+    addUserToDb();
   };
   const addUserToDb = async () => {
     try {
@@ -37,8 +32,13 @@ const SignupPage = () => {
         }
       );
       const data = await response.json();
-      console.log(data);
-      return data;
+      console.log(data.data.message);
+      if (!data.data.success) {
+        setPassword("");
+        setUserName("");
+        alert(data.data.message);
+      }
+      navigate("/");
     } catch (error) {
       console.log(error);
       alert("failed to add user");

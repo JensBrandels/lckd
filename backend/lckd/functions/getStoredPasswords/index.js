@@ -7,15 +7,19 @@ const getPasswords = async (userName) => {
     const command = new QueryCommand({
       TableName: "lckdPasswordsTable",
       IndexName: "usersPasswordIndex",
-      KeyConditionExpression: "user = :user",
+      KeyConditionExpression: "#userAlias = :user",
+      ExpressionAttributeNames: {
+        "#userAlias": "user",
+      },
       ExpressionAttributeValues: {
         ":user": userName,
       },
-      ProjectionExpression: "website, password, userName",
+      ProjectionExpression: "website, password, userName, iv",
     });
 
-    const credentials = await docClient.send(command);
-    return { data: credentials, success: true };
+    const { Items } = await docClient.send(command);
+    console.log(Items);
+    return { data: Items, success: true };
   } catch (error) {
     console.log(error);
     return { success: false };
@@ -28,23 +32,30 @@ exports.handler = async (event) => {
     const userName = event.pathParameters.userName;
     const response = await getPasswords(userName);
 
-    if (!response.success) {
-      return sendError(400, "could not get credentials from db");
-    }
+    console.log(response);
+    // if (!response.success) {
+    //   return sendError(400, "could not get credentials from db");
+    // }
 
     let decrypted = [];
 
     response.data.forEach((credential) => {
-      const decryptedPassword = decrypt(credential.password);
+      console.log(credential);
+      const decryptedPassword = decrypt(credential.password, credential.iv);
+      console.log(decryptedPassword);
       decrypted.push({
         website: credential.website,
         userName: credential.userName,
         password: decryptedPassword,
       });
-
-      return sendResponse({ decrypted, success: true });
+      console.log("decrypted", decrypted);
     });
+
+    return sendResponse({ credentials: decrypted, success: true });
   } catch (error) {
-    return sendError(500, "could not get credentials from db");
+    return sendError(500, {
+      message: "could not get credentials from db",
+      success: false,
+    });
   }
 };

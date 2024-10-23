@@ -3,12 +3,18 @@ import LogoHeader from "../components/logoComponent.jsx";
 import CopyLogo from "../assets/copylogo.svg";
 import Storedpsws from "../components/StorePswComponent.jsx";
 import { useNavigate } from "react-router-dom";
-
+import { useEffect, useState } from "react";
+// import { jwt } from "jsonwebtoken";
 const ViewPasswords = () => {
   const navigate = useNavigate();
-  const handleClick = (path) => {
-    navigate(path);
-  };
+  const sessionToken = sessionStorage.getItem("lckdToken");
+  // const token = jwt.verify(sessionToken, "asdf0987");
+  // const handleClick = (path) => {
+  //   navigate(path);
+  // };
+  // useEffect(() => {
+  //   const fetchData = async () => {};
+  // });
 
   return (
     <div className="viewPasswords-main-container">
@@ -16,7 +22,7 @@ const ViewPasswords = () => {
       <div className="storedPasswords-box">
         <p className="storedPassword-text">STORED PASSWORDS</p>
         <div className="component-box">
-          <Storedpsws onClickAction={() => handleClick("/editlckd")} />
+          <Storedpsws />
         </div>
       </div>
       <div className="plainSight-box">
