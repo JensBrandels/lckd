@@ -20,17 +20,20 @@ const findUser = async (userName) => {
   }
 };
 
-const handler = async (event) => {
+exports.handler = async (event) => {
   try {
     const { userName, password } = JSON.parse(event.body);
 
     if (!userName || !password) {
-      return sendError(400, { message: "Username and password is required" });
+      return sendError(400, {
+        message: "Username and password is required",
+        success: false,
+      });
     }
     const user = await findUser(userName);
-
+    console.log("user", user);
     if (!user) {
-      return sendError(404, "user not found");
+      return sendError(404, { message: "user not found", success: false });
     }
     const isValidPassword = await comparePassword(password, user.password);
     if (!isValidPassword) {
@@ -40,11 +43,9 @@ const handler = async (event) => {
     return sendResponse({
       userName,
       token,
-      message: "success, you have now logged in to quiztopia!",
+      success: true,
     });
   } catch (error) {
-    return sendError(500, { message: "Could not login" });
+    return sendError(500, { message: "Could not login", success: false });
   }
 };
-
-module.exports = { handler };

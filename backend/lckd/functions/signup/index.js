@@ -35,16 +35,22 @@ const isThereAUserByUserName = async (userName) => {
   }
 };
 
-const handler = async (event) => {
+exports.handler = async (event) => {
   try {
     const { userName, password } = JSON.parse(event.body);
 
     if (!userName || !password) {
-      return sendError(400, { message: "Username and password is required" });
+      return sendError(400, {
+        message: "Username and password is required",
+        success: false,
+      });
     }
     const isUserNameAvailable = await isThereAUserByUserName(userName);
     if (!isUserNameAvailable) {
-      return sendError(400, "username not available");
+      return sendError(400, {
+        message: "username not available",
+        success: false,
+      });
     }
 
     const hashedPassword = await hashPassword(password);
@@ -53,14 +59,16 @@ const handler = async (event) => {
       password: hashedPassword,
     };
     const response = await addUser(newUser);
+    console.log(response);
     if (!response.success) {
       return sendError(500, "Could not add user to db");
     }
 
-    return sendResponse({ userName, userId: id });
+    return sendResponse({ userName, message: "user created", success: true });
   } catch (error) {
-    return sendError(500, { message: "Could not add user to database" });
+    return sendError(500, {
+      message: "Could not add user to database",
+      success: false,
+    });
   }
 };
-
-module.exports = { handler };

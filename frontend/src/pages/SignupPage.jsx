@@ -2,19 +2,46 @@ import React from "react";
 import LCKDLOGO from "../assets/Logo.svg";
 import "../sass/SignupPage.scss";
 import { useNavigate } from "react-router-dom";
-import handleForm from "../functions/formHandler";
-
+// import handleForm from "../functions/formHandler";
+import { useState } from "react";
 const SignupPage = () => {
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const runSignUpAndNavigate = (e) => {
     e.preventDefault();
-    const check = handleForm();
-
-    if (check) {
+    if (!userName.length || !password.length) {
+      alert("username and password is required");
+      setPassword("");
+      setUserName("");
+      return;
+    }
+    const response = addUserToDb();
+    if (response.success) {
+      setPassword("");
+      setUserName("");
       navigate("/");
-    } else {
-      alert("username or password is required");
+    }
+  };
+  const addUserToDb = async () => {
+    try {
+      const response = await fetch(
+        "https://6exm9a6aqe.execute-api.eu-north-1.amazonaws.com/api/auth/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userName: userName, password: password }),
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.log(error);
+      alert("failed to add user");
     }
   };
 
@@ -28,9 +55,19 @@ const SignupPage = () => {
       </div>
       <form className="login-forms" onSubmit={runSignUpAndNavigate}>
         <label htmlFor="username">USERNAME</label>
-        <input type="text" name="username" id="username" />
+        <input
+          onChange={(e) => setUserName(e.target.value)}
+          type="text"
+          name="username"
+          id="username"
+        />
         <label htmlFor="password">PASSWORD</label>
-        <input type="text" name="password" id="password" />
+        <input
+          onChange={(e) => setPassword(e.target.value)}
+          type="password"
+          name="password"
+          id="password"
+        />
         <button type="submit">CREATE ACCOUNT</button>
       </form>
     </div>
