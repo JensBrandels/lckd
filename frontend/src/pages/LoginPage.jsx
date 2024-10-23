@@ -12,7 +12,7 @@ const LoginPage = () => {
     e.preventDefault();
     const check = handleForm();
     if (check) {
-      navigate("/");
+      navigate("/viewpasswords");
     } else {
       alert("username or password is wrong");
     }
