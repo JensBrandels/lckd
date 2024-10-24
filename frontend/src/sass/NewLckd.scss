@@ -1,0 +1,19 @@
+.newlckd-main-container {
+  width: 375px;
+  height: 812px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.6fr 0.65fr 2fr;
+  background: rgb(21, 8, 95, 1);
+
+  .newlckd-text {
+    font-family: Open Sans;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32.68px;
+    letter-spacing: 0.15em;
+    text-align: center;
+    padding-top: 1rem;
+    width: 80%;
+  }
+}
