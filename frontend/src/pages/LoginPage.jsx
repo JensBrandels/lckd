@@ -33,6 +33,7 @@ const LoginPage = () => {
       );
       const data = await response.json();
       console.log(data.data.token);
+      sessionStorage.setItem("userName", userName);
       sessionStorage.setItem("lckdToken", data.data.token);
       if (!data.data.success) {
         setPassword("");

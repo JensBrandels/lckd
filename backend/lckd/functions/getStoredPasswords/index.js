@@ -1,6 +1,7 @@
 const { docClient, QueryCommand } = require("../../service/db");
 const { sendResponse, sendError } = require("../../responses");
 const { decrypt } = require("../../utils/cryptoHelper");
+const { isTokenValid } = require("../../utils/jwt");
 
 const getPasswords = async (userName) => {
   try {
@@ -18,7 +19,7 @@ const getPasswords = async (userName) => {
     });
 
     const { Items } = await docClient.send(command);
-    console.log(Items);
+    console.log(Items, "items");
     return { data: Items, success: true };
   } catch (error) {
     console.log(error);
@@ -28,14 +29,12 @@ const getPasswords = async (userName) => {
 
 exports.handler = async (event) => {
   try {
-    //kolla jwt?
-    const userName = event.pathParameters.userName;
+    const { userName } = JSON.parse(event.body);
+    console.log(userName);
+
     const response = await getPasswords(userName);
 
     console.log(response);
-    // if (!response.success) {
-    //   return sendError(400, "could not get credentials from db");
-    // }
 
     let decrypted = [];
 
