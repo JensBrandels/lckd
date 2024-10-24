@@ -13,7 +13,8 @@ const addNewCredentials = async (userName, credentials, encryptedPassword) => {
         user: userName,
         website: credentials.website,
         userName: credentials.userName,
-        password: encryptedPassword,
+        password: encryptedPassword.string,
+        iv: encryptedPassword.iv,
       },
     });
     const { Item } = await docClient.send(command);
@@ -28,8 +29,6 @@ const addNewCredentials = async (userName, credentials, encryptedPassword) => {
 
 exports.handler = async (event) => {
   try {
-    //kolla jwt
-    console.log(event);
     const { userName, credentials } = JSON.parse(event.body);
 
     const encryptedPassword = encrypt(credentials.password);
@@ -39,7 +38,7 @@ exports.handler = async (event) => {
       credentials,
       encryptedPassword
     );
-    console.log("response", response);
+
     if (!response.success) {
       return sendError(400, {
         message: "could not add credentials",

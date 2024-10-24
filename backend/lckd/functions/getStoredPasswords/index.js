@@ -1,21 +1,26 @@
 const { docClient, QueryCommand } = require("../../service/db");
 const { sendResponse, sendError } = require("../../responses");
 const { decrypt } = require("../../utils/cryptoHelper");
+const { isTokenValid } = require("../../utils/jwt");
 
 const getPasswords = async (userName) => {
   try {
     const command = new QueryCommand({
       TableName: "lckdPasswordsTable",
       IndexName: "usersPasswordIndex",
-      KeyConditionExpression: "user = :user",
+      KeyConditionExpression: "#userAlias = :user",
+      ExpressionAttributeNames: {
+        "#userAlias": "user",
+      },
       ExpressionAttributeValues: {
         ":user": userName,
       },
-      ProjectionExpression: "website, password, userName",
+      ProjectionExpression: "website, password, userName, iv",
     });
 
-    const credentials = await docClient.send(command);
-    return { data: credentials, success: true };
+    const { Items } = await docClient.send(command);
+    console.log(Items, "items");
+    return { data: Items, success: true };
   } catch (error) {
     console.log(error);
     return { success: false };
@@ -24,27 +29,32 @@ const getPasswords = async (userName) => {
 
 exports.handler = async (event) => {
   try {
-    //kolla jwt?
-    const userName = event.pathParameters.userName;
+    const { userName } = JSON.parse(event.body);
+    console.log(userName);
+
     const response = await getPasswords(userName);
 
-    if (!response.success) {
-      return sendError(400, "could not get credentials from db");
-    }
+    console.log(response);
 
     let decrypted = [];
 
     response.data.forEach((credential) => {
-      const decryptedPassword = decrypt(credential.password);
+      console.log(credential);
+      const decryptedPassword = decrypt(credential.password, credential.iv);
+      console.log(decryptedPassword);
       decrypted.push({
         website: credential.website,
         userName: credential.userName,
         password: decryptedPassword,
       });
-
-      return sendResponse({ decrypted, success: true });
+      console.log("decrypted", decrypted);
     });
+
+    return sendResponse({ credentials: decrypted, success: true });
   } catch (error) {
-    return sendError(500, "could not get credentials from db");
+    return sendError(500, {
+      message: "could not get credentials from db",
+      success: false,
+    });
   }
 };
