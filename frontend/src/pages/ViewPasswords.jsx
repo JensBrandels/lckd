@@ -9,31 +9,32 @@ const ViewPasswords = () => {
   const navigate = useNavigate();
   const [storedPasswords, setStoredPasswords] = useState([]);
 
-  const fetchData = async (userName) => {
-    try {
-      const response = await fetch(
-        `https://6exm9a6aqe.execute-api.eu-north-1.amazonaws.com/api/getstoredpasswords`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userName: userName }),
-        }
-      );
-      const data = await response.json();
-      console.log(data);
-      setStoredPasswords(data.data.credentials);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   useEffect(() => {
     const userName = sessionStorage.getItem("userName");
-
+    const token = sessionStorage.getItem("lckdToken");
     console.log(userName);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `https://6exm9a6aqe.execute-api.eu-north-1.amazonaws.com/api/getstoredpasswords`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            // body: JSON.stringify({ userName: userName }),
+          }
+        );
+        const data = await response.json();
+        console.log(data);
+        setStoredPasswords(data.data.credentials);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     if (userName) {
-      fetchData(userName);
+      fetchData();
     } else {
       return;
     }

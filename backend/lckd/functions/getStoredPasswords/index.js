@@ -29,10 +29,13 @@ const getPasswords = async (userName) => {
 
 exports.handler = async (event) => {
   try {
-    const { userName } = JSON.parse(event.body);
-    console.log(userName);
+    // const { userName } = JSON.parse(event.body);
+    const token = event.headers.authorization;
+    console.log(token);
 
-    const response = await getPasswords(userName);
+    const validToken = isTokenValid(token);
+    console.log("token name", validToken.userName);
+    const response = await getPasswords(validToken.userName);
 
     console.log(response);
 
